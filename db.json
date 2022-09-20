@@ -1,0 +1,37 @@
+{
+  "students": [
+    {
+      "id": 1663679754014,
+      "name": "rahim",
+      "contacts": "+91 9597930764",
+      "rollno": 1,
+      "subjects": {
+        "maths": 40,
+        "science": 78,
+        "language": 98
+      }
+    },
+    {
+      "id": 1663679759297,
+      "name": "rahim",
+      "rollno": 1,
+      "contacts": "+91 9597930764",
+      "subjects": {
+        "maths": 40,
+        "science": 78,
+        "language": 98
+      }
+    },
+    {
+      "id": 1663679764159,
+      "name": "rahim",
+      "rollno": 1,
+      "contacts": "+91 9597930764",
+      "subjects": {
+        "maths": 40,
+        "science": 78,
+        "language": 98
+      }
+    }
+  ]
+}
