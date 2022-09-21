@@ -1,4 +1,5 @@
 import { Low, JSONFile } from 'lowdb'
+import { v4 as uuidv4 } from 'uuid';
 
 const adapter = new JSONFile('./db.json');
 const db = new Low(adapter);
@@ -7,7 +8,7 @@ const student = {
   create: async (req, res) => {
     const { name, rollno, contacts, subjects } = req.body;
     const student = {
-      id: Date.now(),
+      id: uuidv4(),
       name,
       rollno,
       contacts,
@@ -25,7 +26,7 @@ const student = {
   },
 
   get: async (req, res) => {
-    const studentId = Number(req.params.id);
+    const studentId = req.params.id;
     await db.read();
     const student = db.data.students.find(student => student.id === studentId);
 
@@ -43,7 +44,7 @@ const student = {
   },
 
   remove: async (req, res) => {
-    const studentId = Number(req.params.id);
+    const studentId = req.params.id;
     await db.read();
     const students = db.data.students;
     const indexOfStudent = students.findIndex(student => student.id === studentId);
@@ -56,7 +57,7 @@ const student = {
   update: async (req, res) => {
     const { name, rollno, contacts, subjects } = req.body;
     const updatedStudent = { name, rollno, contacts, subjects };
-    const studentId = Number(req.params.id);
+    const studentId = req.params.id;
     await db.read();
     const students = db.data.students;
     const indexOfStudent = students.findIndex(student => student.id === studentId);
