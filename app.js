@@ -1,12 +1,14 @@
 const express = require('express');
+const dotenv = require('dotenv');
 const {
   createStudent,
   getStudent,
   updateStudent,
   deleteStudent,
-  ping
-} = require('./controllers/studentController')
+  ping,
+} = require('./controllers/studentController');
 
+dotenv.config({ path: './config.env' });
 const app=express()
 
 app.use(express.json());
@@ -16,8 +18,8 @@ app.get('/ping',ping)
 // app.get('/students/:id?',getStudent);
 // app.put('/students/:id',updateStudent).delete('/students/:id',deleteStudent);
 
-
-app.listen(1234,()=>{
-  console.log('server run on port 1234');
+const port = process.env.PORT;
+app.listen(port,()=>{
+  console.log(`server run on port ${port}`);
 });
 
