@@ -69,8 +69,4 @@ const updateStudent = async (req,res)=>{
   });
 };
 
-const ping = (req,res)=>{
-  res.send('pong');
-};
-
-export {createStudent,getStudent,getStudents,deleteStudent,updateStudent,ping};
+export {createStudent,getStudent,getStudents,deleteStudent,updateStudent};

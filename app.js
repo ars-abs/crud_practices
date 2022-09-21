@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import {createStudent,getStudent,getStudents,deleteStudent,updateStudent,ping} from './controllers/studentController'
+import {createStudent,getStudent,getStudents,deleteStudent,updateStudent} from './controllers/student';
+import ping from './controllers/ping';
 
 dotenv.config({ path: './config.env' });
 const app=express()
