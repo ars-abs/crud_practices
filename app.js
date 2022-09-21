@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import {createStudent,getStudent,getStudents,deleteStudent,updateStudent} from './controllers/student';
+import student from './resources/student';
 import ping from './controllers/ping';
 
 dotenv.config({ path: './config.env' });
@@ -9,12 +9,12 @@ const app=express()
 app.use(express.json());
 
 app.get('/ping',ping)
-app.get('/students',getStudents)
-app.post('/students',createStudent);
+app.get('/students', student.getAll)
+app.post('/students', student.create);
 app
-  .get('/students/:id',getStudent)
-  .put('/students/:id',updateStudent)
-  .delete('/students/:id',deleteStudent);
+  .get('/students/:id', student.get)
+  .put('/students/:id', student.update)
+  .delete('/students/:id', student.remove);
 
 const port = process.env.PORT;
 app.listen(port,()=>{
