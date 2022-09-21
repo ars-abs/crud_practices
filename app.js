@@ -1,6 +1,12 @@
-const express = require('express')
+import { Low, JSONFile } from 'lowdb'
+import express from 'express'
+
+// const { Low, JSONFile } =require('lowdb');
+// const express = require('express');
 
 const app=express()
+const adapter = new JSONFile('./db.json');
+const db = new Low(adapter)
 
 // Body Parser middleware
 app.use(express.json());
@@ -26,7 +32,7 @@ const createStudent= async (req,res)=>{
 }
 
 const getStudent = async (req,res)=>{
-  const studentId = req.params.id;
+  const studentId =Number(req.params.id);
   await db.read();
   const students=db.data.students;
   const studentData=(studentId)?students.find(student=>student.id===studentId):students;
@@ -35,10 +41,11 @@ const getStudent = async (req,res)=>{
 }
 
 const deleteStudent = async (req,res)=>{
-  const studentId = req.params.id;
+  const studentId = Number(req.params.id);
   await db.read();
   const students = db.data.students;
   const indexOfStudent = students.findIndex(student=>student.id===studentId)
+  console.log('del',indexOfStudent)
   students.splice(indexOfStudent,1);
   await db.write()
 
@@ -47,11 +54,12 @@ const deleteStudent = async (req,res)=>{
 
 const updateStudent = async (req,res)=>{
   const updatedStudent = req.body;
-  const studentId = req.params.id;
+  const studentId = Number(req.params.id);
   await db.read();
   const students = db.data.students;
   const indexOfStudent = students.findIndex(student=>student.id===studentId);
-  students[indexOfStudent]= { studentId, ...updatedStudent };
+  console.log('index',indexOfStudent)
+  students[indexOfStudent]= { id:studentId, ...updatedStudent };
   await db.write()
 
   res.status(200).json({
