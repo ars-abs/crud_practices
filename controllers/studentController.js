@@ -1,4 +1,9 @@
-exports.createStudent= async (req,res)=>{
+import { Low, JSONFile } from 'lowdb'
+
+const adapter = new JSONFile('./db.json');
+const db = new Low(adapter)
+
+const createStudent= async (req,res)=>{
   const {name,rollno,contacts,subjects} = req.body;
   const student =  {
     id:Date.now(),
@@ -18,34 +23,37 @@ exports.createStudent= async (req,res)=>{
   });
 }
 
-exports.getStudent = async (req,res)=>{
+const getStudent = async (req,res)=>{
   const studentId =Number(req.params.id);
   await db.read();
-  const students=db.data.students;
-  const studentData=(studentId)?students.find(student=>student.id===studentId):students;
+  const student=db.data.students.find(student=>student.id===studentId);
 
-  res.status(200).json({status:'success',data:studentData});
+  res.status(200).json({status:'success',data:student});
 }
 
-exports.deleteStudent = async (req,res)=>{
+const getStudents = async (req,res)=>{
+  await db.read();
+
+  res.status(200).json({status:'success',data:db.data.students});
+}
+
+const deleteStudent = async (req,res)=>{
   const studentId = Number(req.params.id);
   await db.read();
   const students = db.data.students;
   const indexOfStudent = students.findIndex(student=>student.id===studentId)
-  console.log('del',indexOfStudent)
   students.splice(indexOfStudent,1);
   await db.write()
 
   res.status(204).json({status:'success',message:'Student deleted successfully'})
 }
 
-exports.updateStudent = async (req,res)=>{
+const updateStudent = async (req,res)=>{
   const updatedStudent = req.body;
   const studentId = Number(req.params.id);
   await db.read();
   const students = db.data.students;
   const indexOfStudent = students.findIndex(student=>student.id===studentId);
-  console.log('index',indexOfStudent)
   students[indexOfStudent]= { id:studentId, ...updatedStudent };
   await db.write()
 
@@ -56,6 +64,8 @@ exports.updateStudent = async (req,res)=>{
   })
 }
 
-exports.ping = (req,res)=>{
+const ping = (req,res)=>{
   res.send('pong')
 }
+
+export {createStudent,getStudent,getStudents,deleteStudent,updateStudent,ping}
