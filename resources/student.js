@@ -8,16 +8,8 @@ const db = new Low(adapter);
 const student = {
   create: async (req, res) => {
     const { name, rollno, contacts, subjects } = req.body;
-    const student = {
-      id: uuidv4(),
-      name,
-      rollno,
-      contacts,
-      subjects,
-    };
-    await db.read();
-    db.data.students.push(student);
-    await db.write();
+    const student = { name, rollno, contacts, subjects };
+    await lowdb.create(student);
 
     res.status(201).json({
       status: 'success',
@@ -32,8 +24,7 @@ const student = {
   },
 
   getAll: async (req, res) => {
-    await db.read();
-    const students = db.data.students;
+    const students = await lowdb.getAll();
     res.status(200).json({
       status: 'success',
       results: students.length,
@@ -43,29 +34,21 @@ const student = {
 
   remove: async (req, res) => {
     const studentId = req.params.id;
-    await db.read();
-    const students = db.data.students;
-    const indexOfStudent = students.findIndex(student => student.id === studentId);
-    students.splice(indexOfStudent, 1);
-    await db.write();
+    await lowdb.remove(studentId);
 
     res.status(204).json({ status: 'success', message: 'Student deleted successfully' })
   },
 
   update: async (req, res) => {
     const { name, rollno, contacts, subjects } = req.body;
-    const updatedStudent = { name, rollno, contacts, subjects };
+    const updateStudent = { name, rollno, contacts, subjects };
     const studentId = req.params.id;
-    await db.read();
-    const students = db.data.students;
-    const indexOfStudent = students.findIndex(student => student.id === studentId);
-    students[indexOfStudent] = { id: studentId, ...updatedStudent };
-    await db.write();
+    await lowdb.update(studentId,updateStudent)
 
     res.status(200).json({
       status: 'success',
       message: 'Student updated successfully',
-      student: updatedStudent,
+      student: updateStudent,
     });
   },
 };
