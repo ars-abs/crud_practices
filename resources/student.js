@@ -1,5 +1,6 @@
 import { Low, JSONFile } from 'lowdb'
 import { v4 as uuidv4 } from 'uuid';
+import lowdb from '../lib/setupDB';
 
 const adapter = new JSONFile('./db.json');
 const db = new Low(adapter);
@@ -26,10 +27,7 @@ const student = {
   },
 
   get: async (req, res) => {
-    const studentId = req.params.id;
-    await db.read();
-    const student = db.data.students.find(student => student.id === studentId);
-
+    const student = await lowdb.get(req.params.id)
     res.status(200).json({ status: 'success', student });
   },
 
