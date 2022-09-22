@@ -10,7 +10,8 @@ const app = express();
 app.use(express.json());
 
 app.get('/ping', ping);
-registerResource({ app, path: '/students', resource: student });
+registerResource({ app, path: 'students', resource: student });
+registerResource({ app, path: 'teachers', resource: student });
 
 
 const port = process.env.PORT;

@@ -1,10 +1,8 @@
-import lowdb from '../lib/setupDB';
-
 const student = {
-  create: async (req, res) => {
+  create: async (req, res, repo) => {
     const { name, rollno, contacts, subjects } = req.body;
     const student = { name, rollno, contacts, subjects };
-    await lowdb.create(student);
+    await repo.create(student);
 
     res.status(201).json({
       status: 'success',
@@ -13,13 +11,13 @@ const student = {
     });
   },
 
-  get: async (req, res) => {
-    const student = await lowdb.get(req.params.id)
+  get: async (req, res,repo) => {
+    const student = await repo.get(req.params.id)
     res.status(200).json({ status: 'success', student });
   },
 
-  getAll: async (req, res) => {
-    const students = await lowdb.getAll();
+  getAll: async (req, res, repo) => {
+    const students = await repo.getAll();
     res.status(200).json({
       status: 'success',
       results: students.length,
@@ -27,18 +25,18 @@ const student = {
     });
   },
 
-  remove: async (req, res) => {
+  remove: async (req, res,repo) => {
     const studentId = req.params.id;
-    await lowdb.remove(studentId);
+    await repo.remove(studentId);
 
     res.status(204).json({ status: 'success', message: 'Student deleted successfully' })
   },
 
-  update: async (req, res) => {
+  update: async (req, res, repo) => {
     const { name, rollno, contacts, subjects } = req.body;
     const updateStudent = { name, rollno, contacts, subjects };
     const studentId = req.params.id;
-    await lowdb.update(studentId,updateStudent)
+    await repo.update(studentId,updateStudent)
 
     res.status(200).json({
       status: 'success',
