@@ -1,9 +1,4 @@
-import { Low, JSONFile } from 'lowdb'
-import { v4 as uuidv4 } from 'uuid';
 import lowdb from '../lib/setupDB';
-
-const adapter = new JSONFile('./db.json');
-const db = new Low(adapter);
 
 const student = {
   create: async (req, res) => {
