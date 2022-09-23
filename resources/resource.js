@@ -1,25 +1,15 @@
 import setupDB from "../lib/setupDB";
-import { filter } from "@laufire/utils/collection"
+import { select } from "@laufire/utils/collection"
 
 const notFoundResponse = (res) => res.status(404).json({ status: 'fail', message: 'Not Found' })
-const invalidInputResponse = (res) => res.status(400).json({ status: 'fail', message: 'Invalid Input' })
-
-const filterObj = (obj, allowedFields) => {
-  const newObj = {};
-  Object.keys(obj).map((fields) => {
-    if (allowedFields.includes(fields)) newObj[fields] = obj[fields];
-  });
-  return newObj;
-};
 
 const filterBody = (req, res, next, allowedFields) => {
-  req.body = filterObj(req.body, allowedFields);
+  req.body = select(req.body, allowedFields);
   next();
 }
 
 const create = async (req, res, repo) => {
   const data = req.body;
-  if (data === {}) return invalidInputResponse(res)
 
   await repo.create(data);
   res.status(201).json({
@@ -58,7 +48,6 @@ const update = async (req, res, repo) => {
   const data = req.body;
   const getData = await repo.get(id)
   if (!getData) return notFoundResponse(res)
-  if (data === {}) return invalidInputResponse(res)
 
   await repo.update(id, data)
   res.status(200).json({
