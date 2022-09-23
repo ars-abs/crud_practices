@@ -1,4 +1,4 @@
-const factoryResource = {
+const resourceCRUD = {
   create: async (req, res, repo) => {
     await repo.create(req.body);
 
@@ -25,7 +25,7 @@ const factoryResource = {
   remove: async (req, res,repo) => {
     await repo.remove(req.params.id);
 
-    res.status(204).json({ status: 'success', message: 'Deleted successfully' })
+    res.status(204).json({ status: 'success', message: 'Deleted successfully.' })
   },
 
   update: async (req, res, repo) => {
@@ -34,10 +34,9 @@ const factoryResource = {
 
     res.status(200).json({
       status: 'success',
-      message: 'Student updated successfully',
       data,
     });
   },
 };
 
-export default factoryResource;
+export default resourceCRUD;

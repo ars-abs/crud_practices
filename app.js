@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import factoryResource from './resources/factoryResource';
+import resourceCRUD from './resources/resourceCRUD';
 import ping from './controllers/ping';
 import registerResource from './lib/registerResource';
 
@@ -10,8 +10,10 @@ const app = express();
 app.use(express.json());
 
 app.get('/ping', ping);
-registerResource({ app, path: 'students', resource: factoryResource });
-registerResource({ app, path: 'teachers', resource: factoryResource });
+const studentAllowedFields=['name','contacts','rollno','subjects'];
+const teacherAllowedFields=['name','contacts'];
+registerResource({ app, path: 'students', resource: resourceCRUD, allowedFields:studentAllowedFields });
+registerResource({ app, path: 'teachers', resource: resourceCRUD, allowedFields:teacherAllowedFields });
 
 
 const port = process.env.PORT;
