@@ -1,4 +1,4 @@
-const resourceCRUD = {
+const resource = {
   create: async (req, res, repo) => {
     await repo.create(req.body);
 
@@ -39,4 +39,4 @@ const resourceCRUD = {
   },
 };
 
-export default resourceCRUD;
+export default resource;

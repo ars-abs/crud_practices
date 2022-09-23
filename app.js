@@ -1,6 +1,5 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import resourceCRUD from './resources/resourceCRUD';
 import ping from './controllers/ping';
 import registerResource from './lib/registerResource';
 
@@ -12,8 +11,8 @@ app.use(express.json());
 app.get('/ping', ping);
 const studentAllowedFields=['name','contacts','rollno','subjects'];
 const teacherAllowedFields=['name','contacts'];
-registerResource({ app, path: 'students', resource: resourceCRUD, allowedFields:studentAllowedFields });
-registerResource({ app, path: 'teachers', resource: resourceCRUD, allowedFields:teacherAllowedFields });
+registerResource({ app, path: 'students', allowedFields:studentAllowedFields });
+registerResource({ app, path: 'teachers', allowedFields:teacherAllowedFields });
 
 
 const port = process.env.PORT;
