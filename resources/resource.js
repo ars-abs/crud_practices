@@ -1,12 +1,12 @@
 import setupDB from "../lib/setupDB";
-import { select } from "@laufire/utils/collection"
+import { select } from "@laufire/utils/collection";
 
-const notFoundResponse = (res) => res.status(404).json({ status: 'fail', message: 'Not Found' })
+const notFoundResponse = (res) => res.status(404).json({ status: 'fail', message: 'Not Found' });
 
 const filterBody = (req, res, next, allowedFields) => {
   req.body = select(req.body, allowedFields);
   next();
-}
+};
 
 const create = async (req, res, repo) => {
   const data = req.body;
@@ -19,10 +19,10 @@ const create = async (req, res, repo) => {
 };
 
 const get = async (req, res, repo) => {
-  const data = await repo.get(req.params.id)
+  const data = await repo.get(req.params.id);
   const sendResponse = (res) => res.status(200).json({ status: 'success', data });
 
-  (data)?sendResponse(res):notFoundResponse(res);
+  (data) ? sendResponse(res) : notFoundResponse(res);
 };
 
 const getAll = async (req, res, repo) => {
@@ -36,28 +36,28 @@ const getAll = async (req, res, repo) => {
 
 const remove = async (req, res, repo) => {
   const id = req.params.id;
-  const getData = await repo.get(id)
-  const sendResponse = async (res,repo,id) =>{
+  const getData = await repo.get(id);
+  const sendResponse = async (res, repo, id) => {
     await repo.remove(id);
     res.status(204).json({ status: 'success', message: 'Deleted successfully.' });
-  }
+  };
 
-  (getData)?sendResponse(res,repo,id):notFoundResponse(res);
+  (getData) ? sendResponse(res, repo, id) : notFoundResponse(res);
 };
 
 const update = async (req, res, repo) => {
   const id = req.params.id;
   const data = req.body;
-  const getData = await repo.get(id)
-  const sendResponse = async (res,repo,id) => {
-    await repo.update(id, data)
+  const getData = await repo.get(id);
+  const sendResponse = async (res, repo, id) => {
+    await repo.update(id, data);
     res.status(200).json({
       status: 'success',
       data,
     });
-  }
+  };
 
-  (getData)?sendResponse(res,repo,id):notFoundResponse(res);
+  (getData) ? sendResponse(res, repo, id) : notFoundResponse(res);
 };
 
 const resource = ({ app, path, allowedFields }) => {
