@@ -11,8 +11,8 @@ app.use(express.json());
 app.get('/ping', ping);
 const studentAllowedFields = ['name', 'contacts', 'rollno', 'subjects'];
 const teacherAllowedFields = ['name', 'contacts'];
-resource({ app, path: 'students', allowedFields: studentAllowedFields });
-resource({ app, path: 'teachers', allowedFields: teacherAllowedFields });
+resource({ app, name: 'students', allowedFields: studentAllowedFields });
+resource({ app, name: 'teachers', allowedFields: teacherAllowedFields });
 
 
 const port = process.env.PORT;

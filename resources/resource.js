@@ -60,23 +60,23 @@ const update = async (req, res, repo) => {
   (getData) ? sendResponse(res, repo, id) : notFoundResponse(res);
 };
 
-const resource = ({ app, path, allowedFields }) => {
+const resource = ({ app, name, allowedFields }) => {
 
-  const repo = lowdbWrapper(path);
+  const repo = lowdbWrapper(name);
 
-  app.get(`/${path}`, (req, res) => getAll(req, res, repo));
+  app.get(`/${name}`, (req, res) => getAll(req, res, repo));
   app.post(
-    `/${path}`,
+    `/${name}`,
     (req, res, next) => filterBody(req, res, next, allowedFields),
     (req, res) => create(req, res, repo)
   );
   app
-    .get(`/${path}/:id`, (req, res) => get(req, res, repo))
+    .get(`/${name}/:id`, (req, res) => get(req, res, repo))
     .put(
-      `/${path}/:id`,
+      `/${name}/:id`,
       (req, res, next) => filterBody(req, res, next, allowedFields),
       (req, res) => update(req, res, repo))
-    .delete(`/${path}/:id`, (req, res) => remove(req, res, repo));
+    .delete(`/${name}/:id`, (req, res) => remove(req, res, repo));
 };
 
 export default resource;
