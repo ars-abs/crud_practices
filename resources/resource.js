@@ -20,9 +20,9 @@ const create = async (req, res, repo) => {
 
 const get = async (req, res, repo) => {
   const data = await repo.get(req.params.id)
-  if (!data) return notFoundResponse(res)
+  const sendResponse = (res) => res.status(200).json({ status: 'success', data });
 
-  res.status(200).json({ status: 'success', data });
+  (data)?sendResponse(res):notFoundResponse(res);
 };
 
 const getAll = async (req, res, repo) => {
@@ -37,23 +37,27 @@ const getAll = async (req, res, repo) => {
 const remove = async (req, res, repo) => {
   const id = req.params.id;
   const getData = await repo.get(id)
-  if (!getData) return notFoundResponse(res)
+  const sendResponse = async (res,repo,id) =>{
+    await repo.remove(id);
+    res.status(204).json({ status: 'success', message: 'Deleted successfully.' });
+  }
 
-  await repo.remove(id);
-  res.status(204).json({ status: 'success', message: 'Deleted successfully.' });
+  (getData)?sendResponse(res,repo,id):notFoundResponse(res);
 };
 
 const update = async (req, res, repo) => {
   const id = req.params.id;
   const data = req.body;
   const getData = await repo.get(id)
-  if (!getData) return notFoundResponse(res)
+  const sendResponse = async (res,repo,id) => {
+    await repo.update(id, data)
+    res.status(200).json({
+      status: 'success',
+      data,
+    });
+  }
 
-  await repo.update(id, data)
-  res.status(200).json({
-    status: 'success',
-    data,
-  });
+  (getData)?sendResponse(res,repo,id):notFoundResponse(res);
 };
 
 const resource = ({ app, path, allowedFields }) => {
