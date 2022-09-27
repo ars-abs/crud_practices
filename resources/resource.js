@@ -1,4 +1,4 @@
-import lowdbWrapper from "../lib/lowdbWrapper";
+import lowdbRepo from "../lib/lowdbRepo";
 import { select } from "@laufire/utils/collection";
 
 const notFoundResponse = (res) => res.status(404).json({ status: 'fail', message: 'Not Found' });
@@ -62,7 +62,7 @@ const update = async (req, res, repo) => {
 
 const resource = ({ app, name, allowedFields }) => {
 
-  const repo = lowdbWrapper(name);
+  const repo = lowdbRepo(name);
 
   app.get(`/${name}`, (req, res) => getAll(req, res, repo));
   app.post(
