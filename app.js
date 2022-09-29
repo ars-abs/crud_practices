@@ -9,10 +9,18 @@ const app = express();
 app.use(express.json());
 
 app.get('/ping', ping);
-const studentAllowedFields = ['name', 'contacts', 'rollno', 'subjects'];
-const teacherAllowedFields = ['name', 'contacts'];
-resource({ app, name: 'students', allowedFields: studentAllowedFields });
-resource({ app, name: 'teachers', allowedFields: teacherAllowedFields });
+const studentSchema = {
+  name: String,
+  contacts: String,
+  rollno: Number,
+  subjects: Object,
+};
+const teacherSchema = {
+  name: String,
+  contacts: String,
+};
+resource({ app, name: 'students', schema: studentSchema });
+resource({ app, name: 'teachers', schema: teacherSchema });
 
 
 const port = process.env.PORT;
