@@ -1,6 +1,6 @@
 import lowdbRepo from "../lib/lowdbRepo";
 import sqliteRepo from "../lib/sqliteRepo";
-import { select } from "@laufire/utils/collection";
+import { select,equals } from "@laufire/utils/collection";
 
 const notFoundResponse = (res) => res.status(404).json({ status: 'fail', message: 'Not Found' });
 
@@ -23,7 +23,7 @@ const get = async (req, res, repo) => {
   const data = await repo.get(req.params.id);
   const sendResponse = (res) => res.status(200).json({ status: 'success', data });
 
-  (data) ? sendResponse(res) : notFoundResponse(res);
+  (data && !equals(data,[])) ? sendResponse(res) : notFoundResponse(res);
 };
 
 const getAll = async (req, res, repo) => {
@@ -43,7 +43,7 @@ const remove = async (req, res, repo) => {
     res.status(204).json({ status: 'success', message: 'Deleted successfully.' });
   };
 
-  (getData) ? sendResponse(res, repo, id) : notFoundResponse(res);
+  (getData && !equals(getData,[])) ? sendResponse(res, repo, id) : notFoundResponse(res);
 };
 
 const update = async (req, res, repo) => {
@@ -58,29 +58,30 @@ const update = async (req, res, repo) => {
     });
   };
 
-  (getData) ? sendResponse(res, repo, id) : notFoundResponse(res);
+  (getData && !equals(getData,[])) ? sendResponse(res, repo, id) : notFoundResponse(res);
 };
 
-const resource = ({ app, name, schema }) => {
+const chooseRepo={
+  lowdb: (name,schema)=> lowdbRepo(name),
+  sqlite: (name,schema)=>sqliteRepo(name, { uuid: String, ...schema }),
+}
 
-  const repos = (repoName, repo) => {
-    app.get(`/${repoName}/${name}`, (req, res) => getAll(req, res, repo));
-    app.post(
-      `/${repoName}/${name}`,
+const resource = ({ app, name, schema, repoName }) => {
+  const repo = chooseRepo[repoName](name,schema)
+
+  app.get(`/${name}`, (req, res) => getAll(req, res, repo));
+  app.post(
+    `/${name}`,
+    (req, res, next) => filterBody(req, res, next, schema),
+    (req, res) => create(req, res, repo)
+  );
+  app
+    .get(`/${name}/:id`, (req, res) => get(req, res, repo))
+    .put(
+      `/${name}/:id`,
       (req, res, next) => filterBody(req, res, next, schema),
-      (req, res) => create(req, res, repo)
-    );
-    app
-      .get(`/${repoName}/${name}/:id`, (req, res) => get(req, res, repo))
-      .put(
-        `/${repoName}/${name}/:id`,
-        (req, res, next) => filterBody(req, res, next, schema),
-        (req, res) => update(req, res, repo))
-      .delete(`/${repoName}/${name}/:id`, (req, res) => remove(req, res, repo));
-  }
-
-  repos('lowdb', lowdbRepo(name));
-  repos('sqlite', sqliteRepo(name, { uuid: String, ...schema }));
+      (req, res) => update(req, res, repo))
+    .delete(`/${name}/:id`, (req, res) => remove(req, res, repo));
 
 };
 

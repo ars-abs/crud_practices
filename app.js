@@ -19,8 +19,8 @@ const teacherSchema = {
   name: String,
   contacts: String,
 };
-resource({ app, name: 'students', schema: studentSchema });
-resource({ app, name: 'teachers', schema: teacherSchema });
+resource({ app, name: 'students', schema: studentSchema, repoName:'sqlite' });
+resource({ app, name: 'teachers', schema: teacherSchema, repoName:'lowdb' });
 
 
 const port = process.env.PORT;
