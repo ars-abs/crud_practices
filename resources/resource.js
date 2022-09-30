@@ -63,7 +63,7 @@ const update = async (req, res, repo) => {
 
 const resource = ({ app, name, schema }) => {
 
-  const repos = (repoName,repo) => {
+  const repos = (repoName, repo) => {
     app.get(`/${repoName}/${name}`, (req, res) => getAll(req, res, repo));
     app.post(
       `/${repoName}/${name}`,
@@ -79,9 +79,9 @@ const resource = ({ app, name, schema }) => {
       .delete(`/${repoName}/${name}/:id`, (req, res) => remove(req, res, repo));
   }
 
-  repos('lowdb',lowdbRepo(name));
-  repos('sqlite',sqliteRepo(name, { uuid: String, ...schema }));
-  
+  repos('lowdb', lowdbRepo(name));
+  repos('sqlite', sqliteRepo(name, { uuid: String, ...schema }));
+
 };
 
 export default resource;
