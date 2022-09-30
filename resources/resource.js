@@ -30,7 +30,7 @@ const getAll = async (req, res, repo) => {
   const data = await repo.getAll();
   res.status(200).json({
     status: 'success',
-    // results: data.length,
+    results: data.length,
     data,
   });
 };
