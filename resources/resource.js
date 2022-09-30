@@ -63,22 +63,25 @@ const update = async (req, res, repo) => {
 
 const resource = ({ app, name, schema }) => {
 
-  // const repo = lowdbRepo(name);
-  const repo = sqliteRepo(name, { uuid: String, ...schema })
-
-  app.get(`/${name}`, (req, res) => getAll(req, res, repo));
-  app.post(
-    `/${name}`,
-    (req, res, next) => filterBody(req, res, next, schema),
-    (req, res) => create(req, res, repo)
-  );
-  app
-    .get(`/${name}/:id`, (req, res) => get(req, res, repo))
-    .put(
-      `/${name}/:id`,
+  const repos = (repoName,repo) => {
+    app.get(`/${repoName}/${name}`, (req, res) => getAll(req, res, repo));
+    app.post(
+      `/${repoName}/${name}`,
       (req, res, next) => filterBody(req, res, next, schema),
-      (req, res) => update(req, res, repo))
-    .delete(`/${name}/:id`, (req, res) => remove(req, res, repo));
+      (req, res) => create(req, res, repo)
+    );
+    app
+      .get(`/${repoName}/${name}/:id`, (req, res) => get(req, res, repo))
+      .put(
+        `/${repoName}/${name}/:id`,
+        (req, res, next) => filterBody(req, res, next, schema),
+        (req, res) => update(req, res, repo))
+      .delete(`/${repoName}/${name}/:id`, (req, res) => remove(req, res, repo));
+  }
+
+  repos('lowdb',lowdbRepo(name));
+  repos('sqlite',sqliteRepo(name, { uuid: String, ...schema }));
+  
 };
 
 export default resource;
