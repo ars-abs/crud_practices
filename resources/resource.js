@@ -12,10 +12,10 @@ const filterBody = (req, res, next, schema) => {
 const create = async (req, res, repo) => {
   const data = req.body;
 
-  await repo.create(data);
+  const createdData = await repo.create(data);
   res.status(201).json({
     status: 'success',
-    data,
+    data: createdData,
   });
 };
 
@@ -51,10 +51,10 @@ const update = async (req, res, repo) => {
   const data = req.body;
   const getData = await repo.get(id);
   const sendResponse = async (res, repo, id) => {
-    await repo.update(id, data);
+    const updatedData = await repo.update(id, data);
     res.status(200).json({
       status: 'success',
-      data,
+      data: updatedData,
     });
   };
 
