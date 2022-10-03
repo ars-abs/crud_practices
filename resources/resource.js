@@ -1,19 +1,25 @@
 import lowdbRepo from "../lib/lowdbRepo";
 import sqliteRepo from "../lib/sqliteRepo";
-import { select, equals } from "@laufire/utils/collection";
+import { select, equals, range, findIndex } from "@laufire/utils/collection";
 
-const sendResponse = (res, statusCode, message = "", data = []) => {
-  const setStatus = (statusCode) => {
-    if (statusCode >= 400 && statusCode <= 499) return "fail"
-    if (statusCode >= 500 && statusCode <= 599) return "error"
-    return "success"
-  }
+const getStatus = (statusCode) => {
+  const withinRange = (min, max, statusCode) => range(min, max).includes(statusCode);
+  const status = {
+    fail: (statusCode) => withinRange(400, 499, statusCode),
+    error: (statusCode) => withinRange(500, 599, statusCode),
+    success: () => true,
+  };
+
+  return findIndex(status, (status) => status(statusCode));
+}
+
+const sendResponse = (res, statusCode, message = "", data = []) =>
   res.status(statusCode).json({
-    status: setStatus(statusCode),
+    status: getStatus(statusCode),
     message,
     data,
   });
-}
+
 
 const notFoundResponse = (res) => sendResponse(res, 404, 'Not Found.');
 
@@ -24,7 +30,6 @@ const filterBody = (req, res, next, schema) => {
 
 const create = async (req, res, repo) => {
   const data = req.body;
-
   const createdData = await repo.create(data);
   sendResponse(res, 201, "Created Successfully.", createdData)
 };
