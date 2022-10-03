@@ -1,8 +1,21 @@
 import lowdbRepo from "../lib/lowdbRepo";
 import sqliteRepo from "../lib/sqliteRepo";
-import { select,equals } from "@laufire/utils/collection";
+import { select, equals } from "@laufire/utils/collection";
 
-const notFoundResponse = (res) => res.status(404).json({ status: 'fail', message: 'Not Found' });
+const sendResponse = (res, statusCode, message = "", data = []) => {
+  const setStatus = (statusCode) => {
+    if (statusCode >= 400 && statusCode <= 499) return "fail"
+    if (statusCode >= 500 && statusCode <= 599) return "error"
+    return "success"
+  }
+  res.status(statusCode).json({
+    status: setStatus(statusCode),
+    message,
+    data,
+  });
+}
+
+const notFoundResponse = (res) => sendResponse(res, 404, 'Not Found.');
 
 const filterBody = (req, res, next, schema) => {
   req.body = select(req.body, Object.keys(schema));
@@ -13,61 +26,49 @@ const create = async (req, res, repo) => {
   const data = req.body;
 
   const createdData = await repo.create(data);
-  res.status(201).json({
-    status: 'success',
-    data: createdData,
-  });
+  sendResponse(res, 201, "Created Successfully.", createdData)
 };
 
 const get = async (req, res, repo) => {
   const data = await repo.get(req.params.id);
-  const sendResponse = (res) => res.status(200).json({ status: 'success', data });
-
-  (data && !equals(data,[])) ? sendResponse(res) : notFoundResponse(res);
+  (data && !equals(data, [])) ? sendResponse(res, 200, "", data) : notFoundResponse(res);
 };
 
 const getAll = async (req, res, repo) => {
   const data = await repo.getAll();
-  res.status(200).json({
-    status: 'success',
-    results: data.length,
-    data,
-  });
+  sendResponse(res, 200, "", { results: data.length, data })
 };
 
 const remove = async (req, res, repo) => {
   const id = req.params.id;
   const getData = await repo.get(id);
-  const sendResponse = async (res, repo, id) => {
+  const removeAndSendResponse = async (res, repo, id) => {
     await repo.remove(id);
-    res.status(204).json({ status: 'success', message: 'Deleted successfully.' });
+    sendResponse(res, 204, 'Deleted successfully.')
   };
 
-  (getData && !equals(getData,[])) ? sendResponse(res, repo, id) : notFoundResponse(res);
+  (getData && !equals(getData, [])) ? removeAndSendResponse(res, repo, id) : notFoundResponse(res);
 };
 
 const update = async (req, res, repo) => {
   const id = req.params.id;
   const data = req.body;
   const getData = await repo.get(id);
-  const sendResponse = async (res, repo, id) => {
+  const updateAndSendResponse = async (res, repo, id) => {
     const updatedData = await repo.update(id, data);
-    res.status(200).json({
-      status: 'success',
-      data: updatedData,
-    });
+    sendResponse(res, 200, 'Updated successfully', updatedData)
   };
 
-  (getData && !equals(getData,[])) ? sendResponse(res, repo, id) : notFoundResponse(res);
+  (getData && !equals(getData, [])) ? updateAndSendResponse(res, repo, id) : notFoundResponse(res);
 };
 
-const chooseRepo={
-  lowdb: (name,schema)=> lowdbRepo(name),
-  sqlite: (name,schema)=>sqliteRepo(name, { uuid: String, ...schema }),
+const chooseRepo = {
+  lowdb: (name, schema) => lowdbRepo(name),
+  sqlite: (name, schema) => sqliteRepo(name, { uuid: String, ...schema }),
 }
 
 const resource = ({ app, name, schema, repoName }) => {
-  const repo = chooseRepo[repoName](name,schema)
+  const repo = chooseRepo[repoName](name, schema)
 
   app.get(`/${name}`, (req, res) => getAll(req, res, repo));
   app.post(
