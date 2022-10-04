@@ -1,6 +1,8 @@
 import lowdbRepo from "../lib/lowdbRepo";
 import sqliteRepo from "../lib/sqliteRepo";
+import sequelizeSqliteRepo from "../lib/sequelizeSqliteRepo";
 import { select, equals, range, findIndex } from "@laufire/utils/collection";
+import { DataTypes } from "sequelize";
 
 const getStatus = (statusCode) => {
   const withinRange = (min, max, statusCode) => range(min, max).includes(statusCode);
@@ -70,6 +72,7 @@ const update = async (req, res, repo) => {
 const chooseRepo = {
   lowdb: (name, schema) => lowdbRepo(name),
   sqlite: (name, schema) => sqliteRepo(name, { uuid: String, ...schema }),
+  sequelizeSqlite: (name, schema) => sequelizeSqliteRepo(name, {uuid: DataTypes.STRING, ...schema})
 }
 
 const resource = ({ app, name, schema, repoName }) => {
