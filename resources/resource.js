@@ -1,49 +1,44 @@
 import lowdbRepo from "../lib/lowdbRepo";
 import sqliteRepo from "../lib/sqliteRepo";
 import sequelizeSqliteRepo from "../lib/sequelizeSqliteRepo";
-import { select, equals, range, findIndex } from "@laufire/utils/collection";
-import { DataTypes } from "sequelize";
+import { select, equals, range, findIndex, keys } from "@laufire/utils/collection";
 
-const getStatus = (statusCode) => {
-  const withinRange = (min, max, statusCode) => range(min, max).includes(statusCode);
-  const status = {
-    fail: (statusCode) => withinRange(400, 499, statusCode),
-    error: (statusCode) => withinRange(500, 599, statusCode),
-    success: () => true,
-  };
+const withinRange = (min, max, statusCode) => range(min, max).includes(statusCode);
 
-  return findIndex(status, (status) => status(statusCode));
-}
+const status = {
+  fail: (statusCode) => withinRange(400, 499, statusCode),
+  error: (statusCode) => withinRange(500, 599, statusCode),
+  success: () => true,
+};
 
-const sendResponse = (res, statusCode, message = "", data = []) =>
+const getStatus = (statusCode) => findIndex(status, (status) => status(statusCode));
+
+const respond = ({res, statusCode, message, data, results}) =>
   res.status(statusCode).json({
     status: getStatus(statusCode),
     message,
+    results,
     data,
   });
 
 
-const notFoundResponse = (res) => sendResponse(res, 404, 'Not Found.');
+const sendNotFoundedResponse = (res) => respond({res, statusCode:404});
 
-const filterBody = (req, res, next, schema) => {
-  req.body = select(req.body, Object.keys(schema));
-  next();
-};
 
-const create = async (req, res, repo) => {
-  const data = req.body;
+const create = async (req, res, repo, schema) => {
+  const data = select(req.body, keys(schema));
   const createdData = await repo.create(data);
-  sendResponse(res, 201, "Created Successfully.", createdData)
+  respond({res, statusCode:201, data:createdData})
 };
 
 const get = async (req, res, repo) => {
   const data = await repo.get(req.params.id);
-  (data && !equals(data, [])) ? sendResponse(res, 200, "", data) : notFoundResponse(res);
+  (data && !equals(data, [])) ? respond({res, statusCode:200, data}) : sendNotFoundedResponse(res);
 };
 
 const getAll = async (req, res, repo) => {
   const data = await repo.getAll();
-  sendResponse(res, 200, "", { results: data.length, data })
+  respond({res, statusCode:200, results: data.length, data })
 };
 
 const remove = async (req, res, repo) => {
@@ -51,45 +46,38 @@ const remove = async (req, res, repo) => {
   const getData = await repo.get(id);
   const removeAndSendResponse = async (res, repo, id) => {
     await repo.remove(id);
-    sendResponse(res, 204, 'Deleted successfully.')
+    respond({res, statusCode:200, message:'Deleted successfully.'})
   };
 
-  (getData && !equals(getData, [])) ? removeAndSendResponse(res, repo, id) : notFoundResponse(res);
+  (getData && !equals(getData, [])) ? removeAndSendResponse(res, repo, id) : sendNotFoundedResponse(res);
 };
 
-const update = async (req, res, repo) => {
+const update = async (req, res, repo, schema) => {
   const id = req.params.id;
-  const data = req.body;
+  const data = select(req.body, keys(schema));
   const getData = await repo.get(id);
   const updateAndSendResponse = async (res, repo, id) => {
     const updatedData = await repo.update(id, data);
-    sendResponse(res, 200, 'Updated successfully', updatedData)
+    respond({res, statusCode: 200, message: 'Updated successfully', data: updatedData})
   };
 
-  (getData && !equals(getData, [])) ? updateAndSendResponse(res, repo, id) : notFoundResponse(res);
+  (getData && !equals(getData, [])) ? updateAndSendResponse(res, repo, id) : sendNotFoundedResponse(res);
 };
 
-const chooseRepo = {
-  lowdb: (name, schema) => lowdbRepo(name),
-  sqlite: (name, schema) => sqliteRepo(name, { uuid: String, ...schema }),
-  sequelizeSqlite: (name, schema) => sequelizeSqliteRepo(name, {uuid: DataTypes.STRING, ...schema})
+const repoTypes = {
+  lowdb: lowdbRepo,
+  sqlite: sqliteRepo,
+  sequelizeSqlite: sequelizeSqliteRepo,
 }
 
-const resource = ({ app, name, schema, repoName }) => {
-  const repo = chooseRepo[repoName](name, schema)
+const resource = ({ app, name, schema, repoType }) => {
+  const repo = repoTypes[repoType]({name, schema})
 
   app.get(`/${name}`, (req, res) => getAll(req, res, repo));
-  app.post(
-    `/${name}`,
-    (req, res, next) => filterBody(req, res, next, schema),
-    (req, res) => create(req, res, repo)
-  );
+  app.post(`/${name}`, (req, res) => create(req, res, repo, schema));
   app
     .get(`/${name}/:id`, (req, res) => get(req, res, repo))
-    .put(
-      `/${name}/:id`,
-      (req, res, next) => filterBody(req, res, next, schema),
-      (req, res) => update(req, res, repo))
+    .put(`/${name}/:id`, (req, res) => update(req, res, repo, schema))
     .delete(`/${name}/:id`, (req, res) => remove(req, res, repo));
 
 };

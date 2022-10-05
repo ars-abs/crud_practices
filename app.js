@@ -25,9 +25,9 @@ const employeeSchema = {
   contacts: DataTypes.STRING,
 };
 
-resource({ app, name: 'students', schema: studentSchema, repoName:'sqlite' });
-resource({ app, name: 'teachers', schema: teacherSchema, repoName:'lowdb' });
-resource({ app, name: 'employees', schema: employeeSchema, repoName:'sequelizeSqlite' });
+resource({ app, name: 'students', schema: studentSchema, repoType:'sqlite' });
+resource({ app, name: 'teachers', schema: teacherSchema, repoType:'lowdb' });
+resource({ app, name: 'employees', schema: employeeSchema, repoType:'sequelizeSqlite' });
 
 
 const port = process.env.PORT;
