@@ -43,25 +43,25 @@ const getAll = async (req, res, repo) => {
 
 const remove = async (req, res, repo) => {
   const id = req.params.id;
-  const getData = await repo.get(id);
+  const target = await repo.get(id);
   const removeAndSendResponse = async (res, repo, id) => {
     await repo.remove(id);
     respond({res, statusCode:200, message:'Deleted successfully.'})
   };
 
-  (getData && !equals(getData, [])) ? removeAndSendResponse(res, repo, id) : sendNotFoundedResponse(res);
+  (target && !equals(target, [])) ? removeAndSendResponse(res, repo, id) : sendNotFoundedResponse(res);
 };
 
 const update = async (req, res, repo, schema) => {
   const id = req.params.id;
   const data = select(req.body, keys(schema));
-  const getData = await repo.get(id);
+  const target = await repo.get(id);
   const updateAndSendResponse = async (res, repo, id) => {
     const updatedData = await repo.update(id, data);
     respond({res, statusCode: 200, message: 'Updated successfully', data: updatedData})
   };
 
-  (getData && !equals(getData, [])) ? updateAndSendResponse(res, repo, id) : sendNotFoundedResponse(res);
+  (target && !equals(target, [])) ? updateAndSendResponse(res, repo, id) : sendNotFoundedResponse(res);
 };
 
 const repoTypes = {
