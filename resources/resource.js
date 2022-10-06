@@ -1,6 +1,4 @@
-import lowdbRepo from "../lib/lowdbRepo";
-import sqliteRepo from "../lib/sqliteRepo";
-import sequelizeSqliteRepo from "../lib/sequelizeSqliteRepo";
+import repos from "../lib/repos"
 import { select, equals, range, findIndex, keys } from "@laufire/utils/collection";
 
 const withinRange = (min, max, statusCode) => range(min, max).includes(statusCode);
@@ -64,14 +62,9 @@ const update = async (req, res, repo, schema) => {
   (target && !equals(target, [])) ? updateAndSendResponse(res, repo, id) : sendNotFoundedResponse(res);
 };
 
-const repoTypes = {
-  lowdb: lowdbRepo,
-  sqlite: sqliteRepo,
-  sequelizeSqlite: sequelizeSqliteRepo,
-}
 
 const resource = ({ app, name, schema, repoType }) => {
-  const repo = repoTypes[repoType]({name, schema})
+  const repo = repos[repoType]({name, schema})
 
   app.get(`/${name}`, (req, res) => getAll(req, res, repo));
   app.post(`/${name}`, (req, res) => create(req, res, repo, schema));
