@@ -6,7 +6,12 @@ import { DataTypes } from "sequelize";
 
 dotenv.config({ path: './config.env' });
 const app = express();
+const apiLog = (req, res, next) => {
+  console.log(`method: '${req.method}', path: '${req.originalUrl}'`);
+  next();
+}
 
+app.use(apiLog);
 app.use(express.json());
 
 app.get('/ping', ping);
