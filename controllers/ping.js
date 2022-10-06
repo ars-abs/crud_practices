@@ -1,4 +1,4 @@
-const ping = (req,res)=>{
+const ping = (req, res) => {
   res.send('pong');
 };
 
