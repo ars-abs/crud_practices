@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors'
 import dotenv from 'dotenv';
 import ping from './controllers/ping';
 import resource from './resources/resource';
@@ -11,6 +12,11 @@ const apiLog = (req, res, next) => {
   next();
 }
 
+app.use(cors(
+  {
+    origin: `*`,
+  }
+))
 app.use(apiLog);
 app.use(express.json());
 
@@ -30,9 +36,16 @@ const employeeSchema = {
   contacts: DataTypes.STRING,
 };
 
-resource({ app, name: 'students', schema: studentSchema, repoType:'sqlite' });
-resource({ app, name: 'teachers', schema: teacherSchema, repoType:'lowdb' });
-resource({ app, name: 'employees', schema: employeeSchema, repoType:'sequelizeSqlite' });
+const todoSchema = {
+  text: DataTypes.STRING,
+  completed: DataTypes.BOOLEAN,
+}
+
+resource({ app, name: 'students', schema: studentSchema, repoType: 'sqlite' });
+resource({ app, name: 'teachers', schema: teacherSchema, repoType: 'lowdb' });
+resource({ app, name: 'employees', schema: employeeSchema, repoType: 'sequelizeSqlite' });
+
+resource({ app, name: 'todos', schema: todoSchema, repoType: 'sequelizeSqlite' })
 
 
 const port = process.env.PORT;
