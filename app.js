@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import ping from './controllers/ping';
 import resource from './resources/resource';
 import { DataTypes } from "sequelize";
+import Task from './controllers/task';
 
 dotenv.config({ path: './config.env' });
 const app = express();
@@ -44,8 +45,9 @@ const todoSchema = {
 resource({ app, name: 'students', schema: studentSchema, repoType: 'sqlite' });
 resource({ app, name: 'teachers', schema: teacherSchema, repoType: 'lowdb' });
 resource({ app, name: 'employees', schema: employeeSchema, repoType: 'sequelizeSqlite' });
-
 resource({ app, name: 'todos', schema: todoSchema, repoType: 'sequelizeSqlite' })
+
+app.get('/task',Task.get);
 
 
 const port = process.env.PORT;
