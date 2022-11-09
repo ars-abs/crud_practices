@@ -8,7 +8,10 @@ const config = {
         rollNo: 'number',
         subjects: 'object',
       },
-      repo: { type: 'sequelizeSqlite' },
+      repo: {
+        type: 'sequelizeSqlite',
+        path: './db.sqlite',
+      },
     },
     teachers: {
       name: 'teachers',
@@ -16,7 +19,10 @@ const config = {
         name: 'string',
         contacts: 'string',
       },
-      repo: { type: 'lowdb' },
+      repo: {
+        type: 'lowdb',
+        path: './jsonDBFiles',
+      },
     },
     employees: {
       name: 'employees',
@@ -25,7 +31,10 @@ const config = {
         contacts: 'string',
         address: 'string',
       },
-      repo: { type: 'sqlite' },
+      repo: {
+        type: 'sqlite',
+        path: 'sqlite://db.sqlite',
+      },
     },
     todos: {
       name: 'todos',
@@ -33,7 +42,10 @@ const config = {
         text: 'string',
         completed: 'boolean',
       },
-      repo: {type: 'sequelizeSqlite'}
+      repo: {
+        type: 'sequelizeSqlite',
+        path: './db.sqlite',
+      }
     }
   }
 }
