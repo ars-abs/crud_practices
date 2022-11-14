@@ -4,8 +4,8 @@ import translateSchema from './translateSchema';
 import standardizeResources from './standardizeResources';
 
 const setupResource = (context) => {
-	const { app, resources } = context;
-	const standardizedResources = standardizeResources(resources);
+	const { app, resources, repos } = context;
+	const standardizedResources = standardizeResources({resources, repos});
 
 	map(standardizedResources, (standardizedResource) => {
 		const {
