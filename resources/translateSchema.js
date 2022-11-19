@@ -11,8 +11,8 @@ const repoDataTypes = {
   sequelizeSqlite: {
     string: DataTypes.STRING,
     boolean: DataTypes.BOOLEAN,
-    number: DataTypes.NUMBER,
-    object: DataTypes.JSON,
+    number: DataTypes.INTEGER,
+    object: DataTypes.JSONB,
   },
 }
 
