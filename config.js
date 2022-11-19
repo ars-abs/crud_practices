@@ -1,6 +1,6 @@
 const config = {
 	repos: {
-		sequelize: {
+		sequelizeSqlite: {
 			type: 'sequelizeSqlite',
 			path: './db.sqlite',
 		},
@@ -22,7 +22,7 @@ const config = {
 				rollNo: { type: 'number', isRequired: true },
 				subjects: 'object',
 			},
-			repo: 'sequelize',
+			repo: 'sequelizeSqlite',
 		},
 		teachers: {
 			name: 'teachers',
@@ -39,7 +39,10 @@ const config = {
 				contacts: 'string',
 				address: 'string',
 			},
-			repo: 'sqlite',
+			repo: {
+				type: 'sqlite',
+				path: 'sqlite://db.sqlite',
+			},
 		},
 		todos: {
 			name: 'todos',
@@ -47,7 +50,7 @@ const config = {
 				text: 'string',
 				completed: 'boolean',
 			},
-			repo: 'sequelize',
+			repo: 'sequelizeSqlite',
 		},
 	},
 };
