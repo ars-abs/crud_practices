@@ -5,21 +5,16 @@ import standardizeResources from './standardizeResources';
 
 const setupResource = (context) => {
 	const { app, resources, repos } = context;
-	const standardizedResources = standardizeResources({resources, repos});
+	const standardizedResources = standardizeResources({ resources, repos });
 
 	map(standardizedResources, (standardizedResource) => {
-		const {
-			name,
-			schema,
-			repo: { type: repoType, path: repoPath },
-		} = standardizedResource;
+		const { name, schema, repo:{type, ...rest} } = standardizedResource;
 
 		resource({
 			app: app,
 			name: name,
-			schema: translateSchema({ repoType, schema }),
-			repoType: repoType,
-			repoPath: repoPath,
+			schema: translateSchema({ repoType:type, schema }),
+			repoOption: {type, ...rest}
 		});
 	});
 };

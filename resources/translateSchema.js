@@ -8,7 +8,7 @@ const repoDataTypes = {
     number: Number,
     object: Object,
   },
-  sequelizeSqlite: {
+  sequelize: {
     string: DataTypes.STRING,
     boolean: DataTypes.BOOLEAN,
     number: DataTypes.INTEGER,
@@ -21,7 +21,7 @@ const translateDataType = ({repoType, field}) => repoDataTypes[repoType][field.t
 const repoTypes = {
   lowdb: () => null,
   sqlite: ({repoType, field}) => translateDataType({repoType, field}),
-  sequelizeSqlite: ({repoType, field})=> ({ ...field, type: translateDataType({repoType, field}) }),
+  sequelize: ({repoType, field})=> ({ ...field, type: translateDataType({repoType, field}) }),
 }
 
 const translateSchema = ({ repoType, schema }) =>

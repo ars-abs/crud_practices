@@ -63,8 +63,8 @@ const update = async (req, res, repo, schema) => {
 };
 
 
-const resource = ({ app, name, schema, repoType, repoPath: path }) => {
-	const repo = repos[repoType]({ name, schema, path })
+const resource = ({ app, name, schema, repoOption: { type: repoType, path, ...rest } }) => {
+	const repo = repos[repoType]({ name, schema, path, ...rest })
 
 	app.get(`/${name}`, (req, res) => getAll(req, res, repo));
 	app.post(`/${name}`, (req, res) => create(req, res, repo, schema));

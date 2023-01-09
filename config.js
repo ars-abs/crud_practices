@@ -1,7 +1,16 @@
 const config = {
 	repos: {
+		postgres: {
+			type: 'sequelize',
+			subType: 'postgres',
+			host: 'localhost',
+			userName: 'root',
+			password: 'root',
+			dataBase: 'SampleDB',
+		},
 		sequelizeSqlite: {
-			type: 'sequelizeSqlite',
+			type: 'sequelize',
+			subType: 'sqlite',
 			path: './db.sqlite',
 		},
 		lowdb: {
@@ -50,7 +59,7 @@ const config = {
 				text: 'string',
 				completed: 'boolean',
 			},
-			repo: 'sequelizeSqlite',
+			repo: 'postgres',
 		},
 	},
 };

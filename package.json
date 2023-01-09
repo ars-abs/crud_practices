@@ -14,12 +14,15 @@
   "dependencies": {
     "@babel/eslint-parser": "^7.19.1",
     "@laufire/utils": "^3.0.0-0",
+    "babel-eslint": "^10.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "lowdb": "^3.0.0",
     "ndb": "^1.1.5",
     "orm": "^7.1.0",
+    "pg": "^8.8.0",
+    "pg-hstore": "^2.3.4",
     "sequelize": "^6.23.2",
     "sqlite3": "^5.1.1",
     "uuid": "^9.0.0"
