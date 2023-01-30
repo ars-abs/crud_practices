@@ -1,22 +1,11 @@
-root: true
-settings:
-  react:
-    version: detect
-parser: "babel-eslint"
-parserOptions:
-  sourceType: "module"
-  allowImportExportEverywhere: false
-  ecmaVersion: 2015
-  ecmaFeatures:
-    globalReturn: false
-  babelOptions:
-    configFile: "babel.config.js"
 env:
-  es6: true
+  browser: true
+  es2021: true
   node: true
-  jest: true
-extends:
-    - "eslint:recommended"
+extends: eslint:recommended
+parserOptions:
+  ecmaVersion: 13
+  sourceType: module
 rules:
   # Styling
   arrow-body-style: ["error", "as-needed"]
@@ -269,4 +258,5 @@ overrides:
       max-lines-per-function: "off"
       max-nested-callbacks: "off"
       max-statements: "off"
+
 

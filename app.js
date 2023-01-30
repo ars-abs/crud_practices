@@ -5,15 +5,16 @@ import ping from './controllers/ping';
 import Task from './controllers/task';
 import config from './config';
 import setup from './setup';
+import { peek } from '@laufire/utils/debug';
 
 dotenv.config({ path: './config.env' });
 const app = express();
 const port = process.env.PORT;
 
 const apiLog = (
-	req, res, next
+	req, res, next,
 ) => {
-	console.log(`method: '${ req.method }', path: '${ req.originalUrl }'`);
+	peek(`method: '${ req.method }', path: '${ req.originalUrl }'`);
 	next();
 };
 
@@ -27,5 +28,5 @@ app.get('/ping', ping);
 app.get('/task', Task.get);
 
 app.listen(port, () => {
-	console.log(`server run on port ${ port }`);
+	peek(`server run on port ${ port }`);
 });

@@ -8,13 +8,13 @@ const setupResource = (context) => {
 	const standardizedResources = standardizeResources({ resources, repos });
 
 	map(standardizedResources, (standardizedResource) => {
-		const { name, schema, repo:{type, ...rest} } = standardizedResource;
+		const { name, schema, repo: { type, ...rest }} = standardizedResource;
 
 		resource({
 			app: app,
 			name: name,
-			schema: translateSchema({ repoType:type, schema }),
-			repoOption: {type, ...rest}
+			schema: translateSchema({ repoType: type, schema: schema }),
+			repoOption: { type, ...rest },
 		});
 	});
 };

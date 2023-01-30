@@ -20,7 +20,7 @@ const config = {
 		sqlite: {
 			type: 'sqlite',
 			path: 'sqlite://db.sqlite',
-		}
+		},
 	},
 	resources: {
 		students: {
