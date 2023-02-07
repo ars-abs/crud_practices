@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "PORT=1236 node --experimental-modules --es-module-specifier-resolution=node app.js",
-    "debug": "ndb --experimental-modules --es-module-specifier-resolution=node app.js"
+    "test": "jest",
+    "test-ci": "jest --coverage"
   },
   "keywords": [],
   "author": "",
@@ -27,7 +28,29 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.20.2",
+    "babel-jest": "^29.4.1",
     "eslint": "^8.27.0",
     "jest": "^29.4.1"
+  },
+  "jest": {
+    "setupFiles": [
+        "./test-setup.js"
+    ],
+    "restoreMocks": true,
+    "collectCoverageFrom": [
+      "./**/*.js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "./coverage"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    }
   }
 }
