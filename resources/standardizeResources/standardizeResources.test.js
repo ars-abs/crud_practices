@@ -1,16 +1,13 @@
-// import { collection } from '@laufire/utils';
-import { map, range } from '@laufire/utils/collection';
-import { rndBetween } from '@laufire/utils/random';
+import { map } from '@laufire/utils/collection';
+import { rndArray, rndDict } from '../../test/helpers';
+
 import standardizeResources from './standardizeResources';
 import standardizes from './standardizes';
 
 test('standardizeResources converts resource to required resource format',
 	() => {
-		const repo = Symbol('repo');
-		const schema = Symbol('schema');
 		const repoOptions = Symbol('repoOptions');
-		const length = 15;
-		const rndArray = range(0, rndBetween(0, length));
+		const rndArr = rndArray();
 		const repoVal = Symbol('repoVal');
 		const schemaVal = Symbol('schemaVal');
 
@@ -18,7 +15,8 @@ test('standardizeResources converts resource to required resource format',
 		jest.spyOn(standardizes, 'getStandardSchema')
 			.mockReturnValue(schemaVal);
 
-		const resources = map(rndArray, () => ({ repo, schema }));
+		const resources = map(rndArr, () =>
+			({ repo: Symbol('repo'), schema: Symbol('schema'), ...rndDict() }));
 
 		const context = { config: {
 			resources: resources,
@@ -26,16 +24,14 @@ test('standardizeResources converts resource to required resource format',
 		}};
 
 		const result = standardizeResources(context);
-		const expectation = map(rndArray, () =>
-			({ repo: repoVal, schema: schemaVal }));
+		const expectation = map(resources, (resource) =>
+			({ ...resource, repo: repoVal, schema: schemaVal }));
 
-		map(resources, () => {
-			expect(standardizes.getStandardRepo).toHaveBeenCalledWith({
-				repo, repoOptions,
-			});
+		expect(result).toEqual(expectation);
+		map(resources, ({ repo, schema }) => {
+			expect(standardizes.getStandardRepo)
+				.toHaveBeenCalledWith({ repo, repoOptions });
 			expect(standardizes.getStandardSchema)
 				.toHaveBeenCalledWith(schema);
 		});
-
-		expect(result).toEqual(expectation);
 	});
