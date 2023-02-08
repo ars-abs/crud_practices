@@ -42,7 +42,8 @@
       "./**/*.js"
     ],
     "coveragePathIgnorePatterns": [
-      "./coverage"
+      "<rootDir>/coverage",
+      "<rootDir>/test/"
     ],
     "coverageThreshold": {
       "global": {

@@ -1,20 +1,22 @@
 import { map } from '@laufire/utils/collection';
 import resource from './resource';
 import translateSchema from './translateSchema';
-import standardizeResources from './standardizeResources';
+import standardizeResources from './standardizeResources/standardizeResources';
 
 const setupResource = (context) => {
-	const { app, resources, repos } = context;
-	const standardizedResources = standardizeResources({ resources, repos });
+	const standardizedResources = standardizeResources(context);
 
 	map(standardizedResources, (standardizedResource) => {
-		const { name, schema, repo: { type, ...rest }} = standardizedResource;
+		const { name, schema, repo } = standardizedResource;
+		const { type } = repo;
 
 		resource({
-			app: app,
+			...context,
 			name: name,
-			schema: translateSchema({ repoType: type, schema: schema }),
-			repoOption: { type, ...rest },
+			schema: translateSchema({
+				...context, repoType: type, schema: schema,
+			}),
+			repoOption: repo,
 		});
 	});
 };
