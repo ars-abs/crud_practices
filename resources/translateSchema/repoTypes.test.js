@@ -4,18 +4,30 @@ import * as translateDataType from './translateDataType';
 import repoTypes from './repoTypes';
 
 describe('repoTypes', () => {
-	test('repoTypes', () => {
-		const translateDataTypeVal = Symbol('translateDataType');
-		const context = { ...rndDict(), field: rndDict() };
+	const translateDataTypeVal = Symbol('translateDataType');
+	const context = { ...rndDict(), field: rndDict() };
 
-		jest.spyOn(translateDataType, 'default')
-			.mockReturnValue(translateDataTypeVal);
+	jest.spyOn(translateDataType, 'default')
+		.mockReturnValue(translateDataTypeVal);
+	const cases = [
+		{
+			result: repoTypes.sequelize(context),
+			expectation: {
+				...context.field,
+				type: translateDataTypeVal,
+			},
+		},
+		{
+			result: repoTypes.sqlite(context),
+			expectation: translateDataTypeVal,
+		},
+		{
+			result: repoTypes.lowdb(context),
+			expectation: null,
+		},
+	];
 
-		expect(repoTypes.lowdb(context)).toEqual(null);
-		expect(repoTypes.sqlite(context)).toEqual(translateDataTypeVal);
-		expect(repoTypes.sequelize(context)).toEqual({
-			...context.field,
-			type: translateDataTypeVal,
-		});
+	test.each(cases)('test $input', ({ result, expectation }) => {
+		expect(result).toEqual(expectation);
 	});
 });
