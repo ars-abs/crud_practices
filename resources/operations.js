@@ -2,8 +2,8 @@ import { equals, keys, select } from '@laufire/utils/collection';
 import responses from './responses';
 
 const create = async ({ req, res, repo, schema }) => {
-	const data = select(req.body, keys(schema));
-	const createdData = await repo.create(data);
+	const sanitizedData = select(req.body, keys(schema));
+	const createdData = await repo.create(sanitizedData);
 
 	responses.respond({ res: res, statusCode: 201, data: createdData });
 };
@@ -29,9 +29,7 @@ const remove = async ({ req, res, repo }) => {
 	const target = await repo.get(id);
 
 	target && !equals(target, [])
-		? responses.removeAndSendResponse(
-			res, repo, id,
-		)
+		? responses.removeAndSendResponse({ res, repo, id })
 		: responses.sendNotFoundedResponse(res);
 };
 
@@ -41,9 +39,7 @@ const update = async ({ req, res, repo, schema }) => {
 	const target = await repo.get(id);
 
 	target && !equals(target, [])
-		? responses.updateAndSendResponse(
-			res, repo, id, data,
-		)
+		? responses.updateAndSendResponse({ res, repo, id, data })
 		: responses.sendNotFoundedResponse(res);
 };
 
