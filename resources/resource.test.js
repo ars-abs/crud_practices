@@ -1,13 +1,6 @@
 import { rndDict } from '../test/helpers';
 import { keys, map } from '@laufire/utils/collection';
 
-jest.mock('./operations', () => ({
-	create: () => {},
-	get: () => {},
-	getAll: () => {},
-	update: () => {},
-	remove: () => {},
-}));
 jest.mock('../lib/repos', () => ({
 	lowdb: () => {},
 	sqlite: () => {},
@@ -33,11 +26,10 @@ describe('resource', () => {
 			return jest.spyOn(repos, key).mockReturnValue(repoReturnVal[key]);
 		});
 
-		const value = Symbol('value');
 		const reqParam = Symbol('req');
 		const resParam = Symbol('res');
 
-		const controllerFn = jest.fn(value)
+		const controllerFn = jest.fn()
 			.mockImplementation((val, fn) => fn(reqParam, resParam));
 		const app = {
 			get: controllerFn,
