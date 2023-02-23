@@ -1,25 +1,26 @@
 import { equals, keys, select } from '@laufire/utils/collection';
-import responses from './responses';
+import respond from './responses/respond';
+import responses from './responses/responses';
 
 const create = async ({ req, res, repo, schema }) => {
 	const sanitizedData = select(req.body, keys(schema));
 	const createdData = await repo.create(sanitizedData);
 
-	responses.respond({ res: res, statusCode: 201, data: createdData });
+	respond({ res: res, statusCode: 201, data: createdData });
 };
 
 const get = async ({ req, res, repo }) => {
 	const data = await repo.get(req.params.id);
 
 	data && !equals(data, [])
-		? responses.respond({ res: res, statusCode: 200, data: data })
+		? respond({ res: res, statusCode: 200, data: data })
 		: responses.sendNotFoundedResponse(res);
 };
 
 const getAll = async ({ res, repo }) => {
 	const data = await repo.getAll();
 
-	responses.respond({
+	respond({
 		res: res, statusCode: 200, results: data.length, data: data,
 	});
 };

@@ -1,5 +1,6 @@
 import { rndDict } from '../test/helpers';
 import { keys, map } from '@laufire/utils/collection';
+import { rndString, rndValue } from '@laufire/utils/random';
 
 jest.mock('../lib/repos', () => ({
 	lowdb: () => {},
@@ -11,8 +12,6 @@ import operations from './operations';
 import repos from '../lib/repos';
 
 import resource from './resource';
-import { rndString, rndValue } from '@laufire/utils/random';
-import { peek } from '@laufire/utils/debug';
 
 describe('resource', () => {
 	test('resource', () => {
@@ -21,10 +20,8 @@ describe('resource', () => {
 
 		const repoReturnVal = map(repos, () => Symbol('repo'));
 
-		map(repos, (value, key) => {
-			peek(repos[key]);
-			return jest.spyOn(repos, key).mockReturnValue(repoReturnVal[key]);
-		});
+		map(repos, (value, key) =>
+			jest.spyOn(repos, key).mockReturnValue(repoReturnVal[key]));
 
 		const reqParam = Symbol('req');
 		const resParam = Symbol('res');
