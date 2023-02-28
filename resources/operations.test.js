@@ -7,62 +7,70 @@ import * as respond from './responses/respond';
 import operations from './operations';
 
 describe('operation', () => {
-	test('create', async () => {
-		const req = { body: rndDict() };
-		const res = Symbol('res');
-		const schema = rndDict();
-		const createdData = Symbol('created data');
-		const repo = { create: jest.fn().mockReturnValue(createdData) };
-		const sanitizedData = Symbol('sanitizedData');
+	test('create', () => {
+		retry(async () => {
+			const req = { body: rndDict() };
+			const res = Symbol('res');
+			const schema = rndDict();
+			const createdData = Symbol('created data');
+			const repo = { create: jest.fn().mockReturnValue(createdData) };
+			const sanitizedData = Symbol('sanitizedData');
 
-		jest.spyOn(collection, 'select').mockReturnValue(sanitizedData);
-		jest.spyOn(respond, 'default').mockReturnValue();
+			jest.spyOn(collection, 'select').mockReturnValue(sanitizedData);
+			jest.spyOn(respond, 'default').mockReturnValue();
 
-		const context = { req, res, repo, schema };
+			const context = { req, res, repo, schema };
 
-		await operations.create(context);
+			await operations.create(context);
 
-		expect(collection.select)
-			.toHaveBeenCalledWith(req.body, collection.keys(schema));
-		expect(repo.create).toHaveBeenCalledWith(sanitizedData);
-		expect(respond.default).toHaveBeenCalledWith({
-			res: res, statusCode: 201, data: createdData,
+			expect(collection.select)
+				.toHaveBeenCalledWith(req.body, collection.keys(schema));
+			expect(repo.create).toHaveBeenCalledWith(sanitizedData);
+			expect(respond.default).toHaveBeenCalledWith({
+				res: res, statusCode: 201, data: createdData,
+			});
 		});
 	});
 
-	test('get', async () => {
-		const data = rndArray(0);
-		const req = { params: { id: Symbol('id') }};
-		const res = Symbol('response');
-		const repo = { get: jest.fn().mockReturnValue(data) };
-		const context = { req, res, repo };
+	test('get', () => {
+		retry(async () => {
+			const data = rndArray(0);
+			const req = { params: { id: Symbol('id') }};
+			const res = Symbol('response');
+			const repo = { get: jest.fn().mockReturnValue(data) };
+			const context = { req, res, repo };
 
-		jest.spyOn(respond, 'default').mockReturnValue();
-		jest.spyOn(responses, 'sendNotFoundedResponse').mockReturnValue();
+			jest.spyOn(respond, 'default').mockReturnValue();
+			jest.spyOn(responses, 'sendNotFoundedResponse').mockReturnValue();
 
-		await operations.get(context);
+			await operations.get(context);
 
-		expect(repo.get).toHaveBeenCalledWith(req.params.id);
-		data && !collection.equals(data, [])
-			? expect(respond.default)
-				.toHaveBeenCalledWith({ res: res, statusCode: 200, data: data })
-			: expect(responses.sendNotFoundedResponse)
-				.toHaveBeenCalledWith(res);
+			expect(repo.get).toHaveBeenCalledWith(req.params.id);
+			data && !collection.equals(data, [])
+				? expect(respond.default)
+					.toHaveBeenCalledWith({
+						res: res, statusCode: 200, data: data,
+					})
+				: expect(responses.sendNotFoundedResponse)
+					.toHaveBeenCalledWith(res);
+		});
 	});
 
-	test('getAll', async () => {
-		const data = rndArray();
-		const res = Symbol('response');
-		const repo = { getAll: jest.fn().mockReturnValue(data) };
-		const context = { res, repo };
+	test('getAll', () => {
+		retry(async () => {
+			const data = rndArray();
+			const res = Symbol('response');
+			const repo = { getAll: jest.fn().mockReturnValue(data) };
+			const context = { res, repo };
 
-		jest.spyOn(respond, 'default').mockReturnValue();
+			jest.spyOn(respond, 'default').mockReturnValue();
 
-		await operations.getAll(context);
+			await operations.getAll(context);
 
-		expect(repo.getAll).toHaveBeenCalledWith();
-		expect(respond.default).toHaveBeenCalledWith({
-			res: res, statusCode: 200, results: data.length, data: data,
+			expect(repo.getAll).toHaveBeenCalledWith();
+			expect(respond.default).toHaveBeenCalledWith({
+				res: res, statusCode: 200, results: data.length, data: data,
+			});
 		});
 	});
 
