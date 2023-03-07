@@ -14,7 +14,7 @@ import repos from '../lib/repos';
 import resource from './resource';
 
 describe('resource', () => {
-	test('resource', () => {
+	test('resource', async () => {
 		map(operations, (value, key) =>
 			jest.spyOn(operations, key).mockReturnValue());
 
@@ -50,7 +50,7 @@ describe('resource', () => {
 			repoOption,
 		};
 
-		resource(context);
+		await resource(context);
 
 		const repo = repoReturnVal[rndRepoType];
 

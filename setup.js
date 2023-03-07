@@ -1,7 +1,5 @@
 import setupResource from './resources/setupResource';
 
-const setup = (context) => {
-	setupResource(context);
-};
+const setup = setupResource;
 
 export default setup;

@@ -1,14 +1,14 @@
 import repos from '../lib/repos';
 import operations from './operations';
 
-const resource = (context) => {
+const resource = async (context) => {
 	const {
 		app,
 		name,
 		schema,
 		repoOption: { type: repoType, path, ...rest },
 	} = context;
-	const repo = repos[repoType]({ name, schema, path, ...rest });
+	const repo = await repos[repoType]({ name, schema, path, ...rest });
 
 	app.get(`/${ name }`, (req, res) => operations.getAll({ ...context, req, res, repo }));
 	app.post(`/${ name }`, (req, res) => operations.create({ ...context, req, res, repo }));
