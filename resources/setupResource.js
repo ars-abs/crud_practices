@@ -1,12 +1,13 @@
 import resource from './resource';
 import translateSchema from './translateSchema';
 import standardizeResources from './standardizeResources/standardizeResources';
+import { map } from '@laufire/utils/collection';
 
 const setupResource = (context) => {
 	const standardizedResources = standardizeResources(context);
 
-	for(const prop in standardizedResources) {
-		const { name, schema, repo } = standardizedResources[prop];
+	map(standardizedResources, (standardizedResource) => {
+		const { name, schema, repo } = standardizedResource;
 		const { type } = repo;
 
 		resource({
@@ -17,7 +18,7 @@ const setupResource = (context) => {
 			}),
 			repoOption: repo,
 		});
-	}
+	});
 };
 
 export default setupResource;
