@@ -2,7 +2,6 @@ import fs from 'fs';
 import csv from 'csvtojson';
 import { DataTypes, Sequelize } from 'sequelize';
 import { map } from '@laufire/utils/collection';
-import { peek } from '@laufire/utils/debug';
 
 const db = new Sequelize({
 	dialect: 'sqlite',
@@ -27,9 +26,14 @@ const bulk = async ({ file: { path }}, res) => {
 
 	fs.unlink(path, (err) => err && throwErr(err));
 
+	await Schema.destroy({
+		where: {},
+		truncate: true,
+	});
+
 	await Promise.all(map(collection, (item) =>
 		Schema.create(item)));
-	peek(collection, 'entity');
+
 	res.status(status).json(collection);
 };
 
