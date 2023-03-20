@@ -61,6 +61,29 @@ const config = {
 			},
 			repo: 'postgres',
 		},
+		ledgers: {
+			name: 'ledgers',
+			schema: {
+				ledger: 'string',
+				type: 'string',
+				accountType: 'string',
+				balance: 'number',
+				notes: 'string',
+			},
+			repo: 'postgres',
+		},
+		journals: {
+			name: 'journals',
+			schema: {
+				date: 'date',
+				credit: 'string',
+				debit: 'string',
+				amount: 'number',
+				document: 'string',
+				notes: 'string',
+			},
+			repo: 'postgres',
+		},
 	},
 };
 
